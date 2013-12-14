@@ -308,17 +308,32 @@ namespace poolio_balls
         public static Vector2[] CreateCatmullCurve(Vector2 previousPoint, Vector2 point1, Vector2 point2, Vector2 afterPoint, float curviness)
         {
             float length = Vector2.Distance(point1, point2);
+            float distanceBetweenPreviousAndAfter = Vector2.Distance(previousPoint, afterPoint);
             Vector2 v1 = point1 - previousPoint;
             Vector2 v2 = point2 - afterPoint;
             float cos = Vector2.Dot(v1, v2) / (v1.Length() * v2.Length());
-
-            List<Vector2> vectors = new List<Vector2>();
+            float angle = (float)Math.Acos(cos);
 
             float radius = Vector2.Distance(point1, point2) / 2f;
+
             int numOfIntermediatePoints = (int)(radius / 2f);
+
+            // if vectors pointing are towards each other
+            if (distanceBetweenPreviousAndAfter > length)
+            {
+                numOfIntermediatePoints -= (int)(numOfIntermediatePoints * (angle / (MathHelper.TwoPi * 2)));
+            }
+            // if vectors are pointing away from each other or parallel
+            else
+            {
+                numOfIntermediatePoints += (int)(numOfIntermediatePoints * (angle / MathHelper.Pi));
+            }
+
+            //int numOfIntermediatePoints = (int)(radius / 2f);
 
             float weightIncrement = 1f / numOfIntermediatePoints * (2f / curviness);// / Math.Abs(cos * 1.5f);//((cos + 1.01f));//*;
 
+            List<Vector2> vectors = new List<Vector2>();
             for (float s = weightIncrement; s < 1f; s += weightIncrement)
             {
                 vectors.Add(Vector2.CatmullRom(previousPoint, point1, point2, afterPoint, s));

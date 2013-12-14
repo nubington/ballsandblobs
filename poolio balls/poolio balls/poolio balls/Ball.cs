@@ -95,8 +95,8 @@ namespace poolio_balls
                     if (ball.Position.X + ball.Radius < position.X - Radius)
                         continue;
 
-                    //if (alreadyHit.Contains(ball))
-                    //    continue;
+                    if (alreadyHit.Contains(ball))
+                        continue;
 
                     if (intersects(ball))
                     {
@@ -119,8 +119,8 @@ namespace poolio_balls
                     if (ball.Position.X - ball.Radius > position.X + Radius)
                         continue;
 
-                    //if (alreadyHit.Contains(ball))
-                    //    continue;
+                    if (alreadyHit.Contains(ball))
+                        continue;
 
                     if (intersects(ball))
                     {
@@ -142,6 +142,9 @@ namespace poolio_balls
                 theta1 = (float)Math.Atan2(moveVector.Y, moveVector.X), // move angle of me
                 theta2 = (float)Math.Atan2(ball.moveVector.Y, ball.moveVector.X); // move angle of other ball
 
+            float myMomentum = m1 * v1,
+                otherMomentum = m2 * v2;
+
             // contact angle from other ball to me
             float phi = (float)Math.Atan2(position.Y - ball.position.Y, position.X - ball.position.X);
 
@@ -152,7 +155,8 @@ namespace poolio_balls
 
             moveVector = new Vector2(newMoveX, newMoveY);
 
-            Position = new Vector2(ball.position.X + distance * (float)Math.Cos(phi), ball.position.Y + distance * (float)Math.Sin(phi));
+            if (myMomentum <= otherMomentum)
+                Position = new Vector2(ball.position.X + distance * (float)Math.Cos(phi), ball.position.Y + distance * (float)Math.Sin(phi));
 
             // contact angle from me to other ball
             //phi = (float)Math.Atan2(ball.position.Y - position.Y, ball.position.X - position.X);
@@ -165,7 +169,8 @@ namespace poolio_balls
 
             ball.moveVector = new Vector2(newMoveX, newMoveY);
 
-            ball.Position = new Vector2(position.X + distance * (float)Math.Cos(phi), position.Y + distance * (float)Math.Sin(phi));
+            if (myMomentum > otherMomentum)
+                ball.Position = new Vector2(position.X + distance * (float)Math.Cos(phi), position.Y + distance * (float)Math.Sin(phi));
         }
 
         /*void ballCollision(Ball ball, Vector2 forceVector)
