@@ -142,8 +142,8 @@ namespace poolio_balls
                 theta1 = (float)Math.Atan2(moveVector.Y, moveVector.X), // move angle of me
                 theta2 = (float)Math.Atan2(ball.moveVector.Y, ball.moveVector.X); // move angle of other ball
 
-            float myMomentum = m1 * v1,
-                otherMomentum = m2 * v2;
+            //float myMomentum = m1 * v1,
+            //    otherMomentum = m2 * v2;
 
             // contact angle from other ball to me
             float phi = (float)Math.Atan2(position.Y - ball.position.Y, position.X - ball.position.X);
@@ -155,7 +155,7 @@ namespace poolio_balls
 
             moveVector = new Vector2(newMoveX, newMoveY);
 
-            if (myMomentum <= otherMomentum)
+            if (v1 >= v2)
                 Position = new Vector2(ball.position.X + distance * (float)Math.Cos(phi), ball.position.Y + distance * (float)Math.Sin(phi));
 
             // contact angle from me to other ball
@@ -169,7 +169,7 @@ namespace poolio_balls
 
             ball.moveVector = new Vector2(newMoveX, newMoveY);
 
-            if (myMomentum > otherMomentum)
+            if (v1 < v2)
                 ball.Position = new Vector2(position.X + distance * (float)Math.Cos(phi), position.Y + distance * (float)Math.Sin(phi));
         }
 
