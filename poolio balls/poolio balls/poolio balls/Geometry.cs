@@ -318,19 +318,20 @@ namespace poolio_balls
 
             int numOfIntermediatePoints = (int)(radius / 2f);
 
-            //float weightIncrement = 1f / numOfIntermediatePoints * (2f / curviness);// / Math.Abs(cos * 1.5f);//((cos + 1.01f));//*;
+            float weightIncrement = 1f / numOfIntermediatePoints * (2f / curviness);// / Math.Abs(cos * 1.5f);//((cos + 1.01f));//*;
 
-            float weightIncrement;
+            /*float weightIncrement = 1f / numOfIntermediatePoints;
+            float angleRatio = angle / (MathHelper.PiOver2);
             // if vectors pointing are towards each other
             if (distanceBetweenPreviousAndAfter > length)
             {
-                weightIncrement = 1f / numOfIntermediatePoints;
+                weightIncrement += weightIncrement * angleRatio;
             }
             // if vectors are pointing away from each other or parallel
             else
             {
-                weightIncrement = 1f / numOfIntermediatePoints;
-            }
+                weightIncrement -= weightIncrement * angleRatio;
+            }*/
 
             List<Vector2> vectors = new List<Vector2>();
             for (float s = weightIncrement; s < 1f; s += weightIncrement)

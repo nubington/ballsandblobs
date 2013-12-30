@@ -110,6 +110,7 @@
     <Compile Include="Ball.cs" />
     <Compile Include="CatmullRomPolygon.cs" />
     <Compile Include="Geometry.cs" />
+    <Compile Include="Grid.cs" />
     <Compile Include="LineSegment.cs" />
     <Compile Include="Polygon.cs" />
     <Compile Include="PrimitiveLine.cs" />

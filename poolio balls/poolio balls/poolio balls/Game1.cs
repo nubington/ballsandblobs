@@ -26,6 +26,13 @@ namespace poolio_balls
         Texture2D redTexture;
         SpriteFont font1;
 
+        int numOfBallsSquared = 50;
+        int ballSize = 3;
+
+        public static Grid Grid;
+
+        PrimitiveLine line;
+
         public Game1()
         {
             Graphics = new GraphicsDeviceManager(this);
@@ -43,6 +50,11 @@ namespace poolio_balls
             ballTexture = Content.Load<Texture2D>("blackcircle");
             redTexture = Content.Load<Texture2D>("red");
             font1 = Content.Load<SpriteFont>("font1");
+
+            line = new PrimitiveLine(Graphics.GraphicsDevice, 1);
+            line.Colour = Color.Black;
+
+            Grid = new Grid(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height, (int)(ballSize * 1.1f));
 
             makeBalls();
 
@@ -90,29 +102,37 @@ namespace poolio_balls
             points.Insert(0, point1);
             
             //points.Insert(0, point3);
-            new Polygon(points.ToArray());
+            //new Polygon(points.ToArray());
 
-            new CatmullRomPolygon(.5f, new Vector2(0, Graphics.GraphicsDevice.Viewport.Height - 400), new Vector2(0, Graphics.GraphicsDevice.Viewport.Height), new Vector2(220, Graphics.GraphicsDevice.Viewport.Height), new Vector2(220, Graphics.GraphicsDevice.Viewport.Height - 400));
+            //new CatmullRomPolygon(.5f, new Vector2(0, Graphics.GraphicsDevice.Viewport.Height - 400), new Vector2(0, Graphics.GraphicsDevice.Viewport.Height), new Vector2(220, Graphics.GraphicsDevice.Viewport.Height), new Vector2(220, Graphics.GraphicsDevice.Viewport.Height - 400));
 
             int xx = Graphics.GraphicsDevice.Viewport.Width / 2,
                 yy = Graphics.GraphicsDevice.Viewport.Height / 2;
-            new CatmullRomPolygon(1f, new Vector2(xx, yy), new Vector2(xx + 100, yy), new Vector2(xx + 100, yy + 100), new Vector2(xx, yy + 100));
+            //new CatmullRomPolygon(1f, new Vector2(xx, yy), new Vector2(xx + 100, yy), new Vector2(xx + 100, yy + 100), new Vector2(xx, yy + 100));
 
             yy = Graphics.GraphicsDevice.Viewport.Height / 4;
-            new CatmullRomPolygon(1f, new Vector2(xx - 50, yy - 50), new Vector2(xx + 25, yy + 50), new Vector2(xx + 50, yy), new Vector2(xx + 100, yy), new Vector2(xx + 125, yy + 50), new Vector2(xx + 200, yy - 50), new Vector2(xx + 100, yy - 100));
+            //new CatmullRomPolygon(1f, new Vector2(xx - 50, yy - 50), new Vector2(xx + 25, yy + 50), new Vector2(xx + 50, yy), new Vector2(xx + 100, yy), new Vector2(xx + 125, yy + 50), new Vector2(xx + 200, yy - 50), new Vector2(xx + 100, yy - 100));
 
             base.Initialize();
         }
 
         void makeBalls()
         {
-            for (int x = 1; x < 10; x++)
+            int startposX = Graphics.GraphicsDevice.Viewport.Width / 2 - (ballSize * numOfBallsSquared) / 2;
+            int startposY = Graphics.GraphicsDevice.Viewport.Height / 2 - (ballSize * numOfBallsSquared) / 2;
+
+            int posX = startposX, posY = startposY;
+
+            for (int x = 0; x < numOfBallsSquared; x++)
             {
-                for (int y = 1; y < 10; y++)
+                posY = startposY;
+                for (int y = 0; y < numOfBallsSquared; y++)
                 {
-                    Ball ball = Ball.CreateBall(new Vector2(x * 26, y * 26), 20, 1);
+                    Ball ball = Ball.CreateBall(new Vector2(posX, posY), ballSize, 1);
                     //ball.Push(new Vector2(50000 * (float)rand.NextDouble() - 25000, 50000 * (float)rand.NextDouble() - 25000));
+                    posY += ballSize;
                 }
+                posX += ballSize;
             }
 
             //Ball ball1 = Ball.CreateBall(new Vector2(100, 100), 50, 1);
@@ -121,7 +141,7 @@ namespace poolio_balls
             //Ball ball2 = Ball.CreateBall(new Vector2(100, 200), 50, 1);
             //ball2.Push(new Vector2(-5, -750));
 
-            Ball ball3 = Ball.CreateBall(new Vector2(1000, 100), 100, 1);
+            //Ball ball3 = Ball.CreateBall(new Vector2(1000, 100), 150, 1);
 
             //Ball ball4 = Ball.CreateBall(new Vector2(1000, 100), 25, 1);
         }
@@ -221,7 +241,7 @@ namespace poolio_balls
 
             totalMoveVectorLength = totalMomentum.Length();*/
 
-            Window.Title = fpsMessage + " - " + totalMoveVectorLength.ToString() + " - Max: " + maxTotalMovement;
+            Window.Title = fpsMessage + " - " + Ball.Balls.Length + " balls - " + totalMoveVectorLength.ToString() + " - Max: " + maxTotalMovement;
 
             base.Update(gameTime);
         }
@@ -238,7 +258,7 @@ namespace poolio_balls
                     if (ball.Contains(mousePosition))
                     {
                         float angle = (float)Math.Atan2(ball.Position.Y - mousePosition.Y, ball.Position.X - mousePosition.X);
-                        ball.Push(new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle)) * 50);
+                        ball.Push(new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle)) * 500);
                     }
                 }
             }
@@ -268,27 +288,23 @@ namespace poolio_balls
                 spriteBatch.Draw(ballTexture, ball.Rectangle, Color.White * .95f);
 
             foreach (Polygon polygon in Polygon.Polygons)
-                polygon.Render(spriteBatch);
+                polygon.Render(spriteBatch, font1);
 
-            foreach (Ball ball in Ball.Balls)
+            /*foreach (Ball ball in Ball.Balls)
             {
-                /*foreach (LineSegment edge in polygon.Sides)
-                {
-                    Vector2 point = Geometry.ClosestPointOnEdge(ball.Position, edge);
+                line.ClearVectors();
+                line.AddVector(ball
+            }*/
 
-                    spriteBatch.Draw(redTexture, new Rectangle((int)point.X - 2, (int)point.Y - 2, 5, 5), Color.White * .8f);
-                }*/
-                foreach (Polygon polygon in Polygon.Polygons)
-                {
-                    //Vector2 point = Geometry.ClosestPointOnPolygon(ball.Position, polygon);
-
-                    //spriteBatch.Draw(redTexture, new Rectangle((int)point.X - 2, (int)point.Y - 2, 5, 5), Color.White * .8f);
-
-                    string str = polygon.Vertices.Length.ToString();
-                    Vector2 strSize = font1.MeasureString(str);
-                    spriteBatch.DrawString(font1, str, new Vector2((int)(polygon.CenterPoint.X - strSize.X / 2), (int)(polygon.CenterPoint.Y - strSize.Y / 2)), Color.Black);
-                }
-            }
+            /*foreach (GridNode node in Grid.nodes)
+            {
+                line.ClearVectors();
+                line.AddVector(new Vector2(node.Rectangle.X, node.Rectangle.Y));
+                line.AddVector(new Vector2(node.Rectangle.X + node.Rectangle.Width, node.Rectangle.Y));
+                line.AddVector(new Vector2(node.Rectangle.X + node.Rectangle.Width, node.Rectangle.Y + node.Rectangle.Height));
+                line.AddVector(new Vector2(node.Rectangle.X, node.Rectangle.Y + node.Rectangle.Height));
+                line.RenderWithAlpha(spriteBatch, .25f);
+            }*/
 
             spriteBatch.End();
 

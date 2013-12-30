@@ -37,6 +37,8 @@ namespace poolio_balls
         public float MaxHeightOverTwo { get; private set; }
         public Vector2 CenterPoint { get; private set; }
 
+        public List<GridNode> OccupiedGridNodes = new List<GridNode>();
+
         float epsilon; // padding for ray casting
 
         /*Polygon(Vector2 p1, Vector2 p2, params Vector2[] vertices)
@@ -211,9 +213,11 @@ namespace poolio_balls
 
             line = new PrimitiveLine(Game1.Graphics.GraphicsDevice, 1);
             line.Colour = Color.White;
+
+            initializeOccupiedGridNodes();
         }
 
-        protected Polygon()
+        void initializeOccupiedGridNodes()
         {
         }
 
@@ -241,7 +245,7 @@ namespace poolio_balls
                 return false;
         }
 
-        public void Render(SpriteBatch spriteBatch)
+        public void Render(SpriteBatch spriteBatch, SpriteFont font)
         {
             /*foreach (LineSegment side in sides)
             {
@@ -259,6 +263,10 @@ namespace poolio_balls
             line.AddVector(vertices[0]);
 
             line.Render(spriteBatch);
+
+            string str = vertices.Count.ToString();
+            Vector2 strSize = font.MeasureString(str);
+            spriteBatch.DrawString(font, str, new Vector2((int)(CenterPoint.X - strSize.X / 2), (int)(CenterPoint.Y - strSize.Y / 2)), Color.Black);
         }
     }
 }
